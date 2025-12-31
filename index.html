@@ -6,63 +6,88 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-    body {
-        margin: 0;
-        overflow: hidden;
-        font-family: "Segoe UI", Tahoma, sans-serif;
-        background: radial-gradient(circle at top, #12002f, #000);
-        color: white;
-    }
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    background: radial-gradient(circle at top, #12002f, #000);
+    color: white;
+}
 
-    canvas {
-        position: fixed;
-        inset: 0;
-    }
+canvas {
+    position: fixed;
+    inset: 0;
+}
 
-    .ui {
-        position: fixed;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        pointer-events: none;
-    }
+.ui {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    pointer-events: none;
+}
 
-    h1 {
-        font-size: clamp(2.5rem, 6vw, 4.5rem);
-        margin: 0;
-        text-shadow: 0 0 25px #fff, 0 0 60px #00e5ff;
-        animation: glow 2s infinite alternate;
-    }
+h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    margin: 0;
+    text-shadow: 0 0 25px #fff, 0 0 60px #00e5ff;
+    animation: glow 2s infinite alternate;
+}
 
-    .icons {
-        font-size: 2rem;
-        margin-top: 15px;
-        animation: bounce 2.5s infinite;
-    }
+.countdown {
+    margin-top: 10px;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    letter-spacing: 2px;
+    opacity: 0.9;
+}
 
-    footer {
-        position: fixed;
-        bottom: 10px;
-        width: 100%;
-        text-align: center;
-        font-size: 0.9rem;
-        opacity: 0.8;
-        letter-spacing: 1px;
-        pointer-events: none;
-    }
+.icons {
+    font-size: 2rem;
+    margin-top: 15px;
+    animation: bounce 2.5s infinite;
+}
 
-    @keyframes glow {
-        from { text-shadow: 0 0 10px #fff, 0 0 30px #00e5ff; }
-        to   { text-shadow: 0 0 35px #fff, 0 0 70px #00e5ff; }
-    }
+footer {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    letter-spacing: 1px;
+    pointer-events: none;
+}
 
-    @keyframes bounce {
-        0%,100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
+.controls {
+    position: fixed;
+    bottom: 50px;
+    display: flex;
+    gap: 10px;
+    pointer-events: auto;
+}
+
+button {
+    padding: 10px 16px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    background: #00e5ff;
+    color: #000;
+    font-weight: bold;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px #fff, 0 0 30px #00e5ff; }
+    to   { text-shadow: 0 0 35px #fff, 0 0 70px #00e5ff; }
+}
+
+@keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
 </style>
 </head>
 <body>
@@ -71,10 +96,14 @@
 
 <div class="ui">
     <h1>🎉 Welcome to 2026 🎉</h1>
+    <div class="countdown" id="countdown">Loading...</div>
     <div class="icons">🎆 🎇 🥳 ✨ 🎊 🚀 🌟</div>
 </div>
 
-<!-- CHANGE YOUR NAME HERE -->
+<div class="controls">
+    <button onclick="switchTheme()">🎨 Theme</button>
+</div>
+
 <footer>
     Made by Vidya
 </footer>
@@ -82,9 +111,9 @@
 <script>
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const countdownEl = document.getElementById("countdown");
 
 let theme = 0;
-
 const themes = [
     ["#ff5252", "#ffeb3b", "#40c4ff", "#69f0ae"],
     ["#f500ff", "#651fff", "#18ffff", "#ff9100"],
@@ -95,9 +124,10 @@ function resize() {
     canvas.width = innerWidth;
     canvas.height = innerHeight;
 }
-addEventListener("resize", resize);
+window.addEventListener("resize", resize);
 resize();
 
+// Fireworks
 function firework(x, y) {
     const colors = themes[theme];
     for (let i = 0; i < 50; i++) {
@@ -125,22 +155,35 @@ setInterval(() => {
 
 // Click fireworks
 canvas.addEventListener("click", e => firework(e.clientX, e.clientY));
+canvas.addEventListener("touchstart", e => {
+    const t = e.touches[0];
+    firework(t.clientX, t.clientY);
+});
 
-// Falling stars
+// Stars
 const stars = [];
 for (let i = 0; i < 60; i++) {
-    stars.push({
+    stars.push({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, speed: Math.random() * 1.5 + 0.5, size: Math.random() * 2 + 1 });
+}
+
+// Confetti / snowflakes
+const confetti = [];
+for (let i = 0; i < 60; i++) {
+    confetti.push({
         x: Math.random() * innerWidth,
         y: Math.random() * innerHeight,
-        speed: Math.random() * 1.5 + 0.5,
-        size: Math.random() * 2 + 1
+        speedY: Math.random() * 2 + 1,
+        speedX: (Math.random() - 0.5) * 1.5,
+        size: Math.random() * 6 + 4,
+        color: themes[theme][Math.floor(Math.random() * themes[theme].length)]
     });
 }
 
-function animateStars() {
-    ctx.fillStyle = "rgba(0,0,0,0.2)";
+function animateParticles() {
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Stars
     ctx.fillStyle = "#fff";
     stars.forEach(s => {
         s.y += s.speed;
@@ -148,9 +191,50 @@ function animateStars() {
         ctx.fillRect(s.x, s.y, s.size, s.size);
     });
 
-    requestAnimationFrame(animateStars);
+    // Confetti / snowflakes
+    confetti.forEach(c => {
+        c.x += c.speedX;
+        c.y += c.speedY;
+        if (c.y > canvas.height) c.y = 0;
+        if (c.x > canvas.width) c.x = 0;
+        if (c.x < 0) c.x = canvas.width;
+        ctx.fillStyle = c.color;
+        ctx.fillRect(c.x, c.y, c.size, c.size);
+    });
+
+    requestAnimationFrame(animateParticles);
 }
-animateStars();
+animateParticles();
+
+// Countdown
+function updateCountdown() {
+    const target = new Date("January 1, 2026 00:00:00").getTime();
+    const now = new Date().getTime();
+    const diff = target - now;
+
+    if (diff <= 0) {
+        countdownEl.textContent = "🎆 HAPPY NEW YEAR! 🎆";
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// Theme switcher
+function switchTheme() {
+    theme = (theme + 1) % themes.length;
+    // Update confetti colors
+    confetti.forEach(c => {
+        c.color = themes[theme][Math.floor(Math.random() * themes[theme].length)];
+    });
+}
 </script>
 
 </body>
