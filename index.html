@@ -37,34 +37,21 @@
         animation: glow 2s infinite alternate;
     }
 
-    .subtitle {
-        margin-top: 12px;
-        font-size: clamp(1.2rem, 3vw, 2rem);
-        opacity: 0.9;
-    }
-
     .icons {
         font-size: 2rem;
         margin-top: 15px;
         animation: bounce 2.5s infinite;
     }
 
-    .controls {
+    footer {
         position: fixed;
-        bottom: 20px;
-        display: flex;
-        gap: 10px;
-        pointer-events: auto;
-    }
-
-    button {
-        padding: 10px 16px;
-        border-radius: 20px;
-        border: none;
-        cursor: pointer;
-        background: #00e5ff;
-        color: #000;
-        font-weight: bold;
+        bottom: 10px;
+        width: 100%;
+        text-align: center;
+        font-size: 0.9rem;
+        opacity: 0.8;
+        letter-spacing: 1px;
+        pointer-events: none;
     }
 
     @keyframes glow {
@@ -83,16 +70,14 @@
 <canvas id="canvas"></canvas>
 
 <div class="ui">
-    <!-- CHANGE HERE -->
     <h1>🎉 Welcome to 2026 🎉</h1>
-    <div class="subtitle">Made by Vidya</div>
-
     <div class="icons">🎆 🎇 🥳 ✨ 🎊 🚀 🌟</div>
 </div>
 
-<div class="controls">
-    <button onclick="switchTheme()">🎨 Theme</button>
-</div>
+<!-- CHANGE YOUR NAME HERE -->
+<footer>
+    Made by Vidya
+</footer>
 
 <script>
 const canvas = document.getElementById("canvas");
@@ -113,7 +98,6 @@ function resize() {
 addEventListener("resize", resize);
 resize();
 
-// Fireworks
 function firework(x, y) {
     const colors = themes[theme];
     for (let i = 0; i < 50; i++) {
@@ -142,10 +126,10 @@ setInterval(() => {
 // Click fireworks
 canvas.addEventListener("click", e => firework(e.clientX, e.clientY));
 
-// Falling stars + confetti
-const particles = [];
+// Falling stars
+const stars = [];
 for (let i = 0; i < 60; i++) {
-    particles.push({
+    stars.push({
         x: Math.random() * innerWidth,
         y: Math.random() * innerHeight,
         speed: Math.random() * 1.5 + 0.5,
@@ -153,24 +137,20 @@ for (let i = 0; i < 60; i++) {
     });
 }
 
-function drawParticles() {
+function animateStars() {
     ctx.fillStyle = "rgba(0,0,0,0.2)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "#fff";
-    particles.forEach(p => {
-        p.y += p.speed;
-        if (p.y > canvas.height) p.y = 0;
-        ctx.fillRect(p.x, p.y, p.size, p.size);
+    stars.forEach(s => {
+        s.y += s.speed;
+        if (s.y > canvas.height) s.y = 0;
+        ctx.fillRect(s.x, s.y, s.size, s.size);
     });
 
-    requestAnimationFrame(drawParticles);
+    requestAnimationFrame(animateStars);
 }
-drawParticles();
-
-function switchTheme() {
-    theme = (theme + 1) % themes.length;
-}
+animateStars();
 </script>
 
 </body>
