@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Welcome to 2026 🎆</title>
+<title>Celebration Page 🎆</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
     body {
         margin: 0;
@@ -36,10 +37,10 @@
         animation: glow 2s infinite alternate;
     }
 
-    .countdown {
-        font-size: clamp(1.5rem, 4vw, 2.5rem);
-        margin-top: 10px;
-        letter-spacing: 4px;
+    .subtitle {
+        margin-top: 12px;
+        font-size: clamp(1.2rem, 3vw, 2rem);
+        opacity: 0.9;
     }
 
     .icons {
@@ -82,27 +83,21 @@
 <canvas id="canvas"></canvas>
 
 <div class="ui">
+    <!-- CHANGE HERE -->
     <h1>🎉 Welcome to 2026 🎉</h1>
-    <div class="countdown" id="countdown">Loading...</div>
+    <div class="subtitle">Made by Vidya</div>
+
     <div class="icons">🎆 🎇 🥳 ✨ 🎊 🚀 🌟</div>
 </div>
 
 <div class="controls">
-    <button onclick="toggleMusic()">🎵 Music</button>
     <button onclick="switchTheme()">🎨 Theme</button>
 </div>
-
-<audio id="music" loop>
-    <source src="https://actions.google.com/sounds/v1/ambiences/space_ambience.ogg">
-</audio>
 
 <script>
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const music = document.getElementById("music");
-const countdownEl = document.getElementById("countdown");
 
-let musicOn = false;
 let theme = 0;
 
 const themes = [
@@ -118,15 +113,7 @@ function resize() {
 addEventListener("resize", resize);
 resize();
 
-function toggleMusic() {
-    musicOn = !musicOn;
-    musicOn ? music.play().catch(()=>{}) : music.pause();
-}
-
-function switchTheme() {
-    theme = (theme + 1) % themes.length;
-}
-
+// Fireworks
 function firework(x, y) {
     const colors = themes[theme];
     for (let i = 0; i < 50; i++) {
@@ -147,43 +134,43 @@ function firework(x, y) {
     }
 }
 
-canvas.addEventListener("click", e => firework(e.clientX, e.clientY));
-canvas.addEventListener("touchstart", e => {
-    const t = e.touches[0];
-    firework(t.clientX, t.clientY);
-});
-
-function loop() {
-    ctx.fillStyle = "rgba(0,0,0,0.2)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    requestAnimationFrame(loop);
-}
-loop();
-
+// Auto fireworks
 setInterval(() => {
     firework(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
 }, 700);
 
-// Countdown to Jan 1, 2026
-function updateCountdown() {
-    const target = new Date("January 1, 2026 00:00:00").getTime();
-    const now = new Date().getTime();
-    const diff = target - now;
+// Click fireworks
+canvas.addEventListener("click", e => firework(e.clientX, e.clientY));
 
-    if (diff <= 0) {
-        countdownEl.textContent = "🎆 HAPPY NEW YEAR! 🎆";
-        return;
-    }
-
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const m = Math.floor((diff / (1000 * 60)) % 60);
-    const s = Math.floor((diff / 1000) % 60);
-
-    countdownEl.textContent = `${d}d ${h}h ${m}m ${s}s`;
+// Falling stars + confetti
+const particles = [];
+for (let i = 0; i < 60; i++) {
+    particles.push({
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight,
+        speed: Math.random() * 1.5 + 0.5,
+        size: Math.random() * 2 + 1
+    });
 }
-setInterval(updateCountdown, 1000);
-updateCountdown();
+
+function drawParticles() {
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#fff";
+    particles.forEach(p => {
+        p.y += p.speed;
+        if (p.y > canvas.height) p.y = 0;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    });
+
+    requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+function switchTheme() {
+    theme = (theme + 1) % themes.length;
+}
 </script>
 
 </body>
