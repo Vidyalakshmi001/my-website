@@ -2,9 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome 2026</title>
+    <title>Welcome to 2026</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
+            background-size: 600% 600%;
+            animation: backgroundShift 10s ease infinite;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.6),
+                         0 0 20px rgba(0,200,255,0.6),
+                         0 0 40px rgba(0,200,255,0.8);
+            animation: glow 2s ease-in-out infinite alternate,
+                       float 4s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px rgba(255,255,255,0.4),
+                             0 0 20px rgba(0,200,255,0.5);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(255,255,255,0.8),
+                             0 0 40px rgba(0,200,255,1);
+            }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes backgroundShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to 2026</h1>
+    <h1>✨ Welcome to 2026 ✨</h1>
 </body>
 </html>
